@@ -39,7 +39,7 @@ lazy_static! {
 
 #[repr(C)]
 pub struct Buffer {
-    pub len: u64,
+    pub len: u32,
     pub data: u32,
 }
 

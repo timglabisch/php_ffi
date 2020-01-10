@@ -1,6 +1,6 @@
 struct Buffer {
-    uint64_t   len; // u64 doesnt work?!
-    uint32_t    data;
+    uint32_t   data;
+    uint32_t   len;
 };
 
 void start();
