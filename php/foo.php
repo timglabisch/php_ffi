@@ -2,7 +2,7 @@
 
 $ffi = \FFI::cdef(
     file_get_contents(__DIR__ . '/../rlib/rlib.h'),
-    __DIR__ . '/../rlib/target/release/librlib.dylib'
+    __DIR__ . '/../clib/lib.dylib'
 );
 
 $poll1 = $ffi->poll();
