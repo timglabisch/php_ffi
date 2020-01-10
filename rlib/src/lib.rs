@@ -39,8 +39,8 @@ lazy_static! {
 
 #[repr(C)]
 pub struct Buffer {
-    pub data: *mut u8,
-    pub len: u32,
+    pub len: u64,
+    pub data: u32,
 }
 
 #[no_mangle]
@@ -104,6 +104,9 @@ pub extern fn queue_read(filename: *const c_char) -> u64 {
 #[no_mangle]
 pub extern fn poll() -> Buffer {
 
+    return Buffer { len: 1, data: 1 };
+
+    /*
     task::block_on(async {
 
         let mut recv_queue = {
@@ -129,7 +132,9 @@ pub extern fn poll() -> Buffer {
             return Buffer { data, len: len as u32 }
         }
 
+
     })
+    */
 }
 
 /*
