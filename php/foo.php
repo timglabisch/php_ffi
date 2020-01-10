@@ -19,9 +19,12 @@ file_put_contents('/tmp/foo2.txt', 'two');
 $ffi->start();
 echo "read one\n";
 echo $ffi->queue_read('/tmp/foo1.txt');
+
+/*
 echo "read two\n";
 echo $ffi->queue_read('/tmp/foo2.txt');
 echo "start polling\n";
+*/
 
 $poll1 = $ffi->poll();
 var_dump($poll1);
