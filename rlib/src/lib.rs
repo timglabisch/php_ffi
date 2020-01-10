@@ -40,7 +40,7 @@ lazy_static! {
 #[repr(C)]
 pub struct Buffer {
     pub data: *mut u8,
-    pub len: u64,
+    pub len: u32,
 }
 
 #[no_mangle]
@@ -103,6 +103,7 @@ pub extern fn queue_read(filename: *const c_char) -> u64 {
 
 #[no_mangle]
 pub extern fn poll() -> Buffer {
+
     task::block_on(async {
 
         let mut recv_queue = {
@@ -125,12 +126,13 @@ pub extern fn poll() -> Buffer {
             let data = buf.as_mut_ptr();
             let len = buf.len();
             std::mem::forget(buf);
-            return Buffer { data, len: len as u64 }
+            return Buffer { data, len: len as u32 }
         }
 
     })
 }
 
+/*
 #[no_mangle]
 pub extern fn free_buf(buf: Buffer) {
     let s = unsafe { std::slice::from_raw_parts_mut(buf.data, buf.len as usize) };
@@ -139,6 +141,7 @@ pub extern fn free_buf(buf: Buffer) {
         Box::from_raw(s);
     }
 }
+*/
 
 
 #[no_mangle]
