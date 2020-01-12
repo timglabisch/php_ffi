@@ -9,6 +9,8 @@ use futures::channel::mpsc::{Receiver, Sender, channel};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::thread;
 use std::sync::Arc;
+use std::time::Duration;
+use rand::Rng;
 
 #[macro_use]
 extern crate lazy_static;
@@ -16,26 +18,26 @@ extern crate lazy_static;
 #[derive(Debug, Clone)]
 struct IoRequest {
     filename: String,
-    token: u64
+    token: u64,
 }
 
 #[derive(Debug, Clone)]
 struct IoResponse {
     token: u64,
     data: Vec<u8>,
-    request: IoRequest
+    request: IoRequest,
 }
 
 lazy_static! {
     static ref TOKEN : AtomicUsize = AtomicUsize::new(0);
-    static ref REQUEST_QUEUE : Mutex<(Sender<IoRequest>, Arc<Receiver<IoRequest>>)> = Mutex::new({
+    static ref REQUEST_QUEUE : (Mutex<Sender<IoRequest>>, ::std::sync::Mutex<Receiver<IoRequest>>) = {
         let (s, r) = channel(100);
-        (s, Arc::new(r))
-    });
-    static ref RESPONSE_QUEUE : Mutex<(Sender<IoResponse>, Option<Receiver<IoResponse>>)> = Mutex::new({
+        (Mutex::new(s), ::std::sync::Mutex::new(r))
+    };
+    static ref RESPONSE_QUEUE : (Mutex<Sender<IoResponse>>, ::std::sync::Mutex<Receiver<IoResponse>>) = {
         let (s, r) = channel(100);
-        (s, Some(r))
-    });
+        (Mutex::new(s), ::std::sync::Mutex::new(r))
+    };
 }
 
 #[repr(C)]
@@ -46,37 +48,29 @@ pub struct Buffer {
 
 #[no_mangle]
 pub extern fn start() {
-    thread::spawn(||{
+    thread::spawn(|| {
         task::block_on(async {
-
             loop {
-
-                let mut recv_queue = {
-                    let mut request_queue_guard = REQUEST_QUEUE.lock().await;
-
-                    &mut request_queue_guard.1.clone()
-                };
+                let mut request_queue_guard = REQUEST_QUEUE.1.lock().expect("...");
 
                 loop {
-
-                    let request : IoRequest = match recv_queue.next().await {
+                    let request: IoRequest = match request_queue_guard.next().await {
                         Some(v) => v,
                         None => continue
                     };
 
-                    println!("rust: starts working on task.");
+                    // println!("rust: starts working on task.");
 
                     let mut file = File::open(&request.filename).await.expect("...");
 
                     let mut data = vec![];
                     let _ = file.read_to_end(&mut data).await.expect("...");
 
-                    RESPONSE_QUEUE.lock().await.0.try_send(IoResponse {
+                    RESPONSE_QUEUE.0.lock().await.try_send(IoResponse {
                         token: request.token,
                         data,
-                        request
+                        request,
                     }).expect("...");
-
                 }
             }
         })
@@ -89,13 +83,21 @@ pub extern fn queue_read(filename: *const c_char) -> u64 {
 
     let filename = unsafe { CStr::from_ptr(filename) }.to_string_lossy();
 
-    task::block_on(async move {
-        let mut request_queue_guard = REQUEST_QUEUE.lock().await;
+    ::std::thread::spawn(move || {
+        task::block_on(async move {
+            let mut rng = rand::thread_rng();
+            let dur = Duration::from_millis(rng.gen_range(0, 1000));
+            let never = ::async_std::future::pending::<()>();
+            ::async_std::future::timeout(dur, never).await.is_err();
 
-        &mut request_queue_guard.0.try_send(IoRequest {
-            token,
-            filename: filename.to_string(),
-        }).expect("...");
+
+            let mut request_queue_guard = REQUEST_QUEUE.0.lock().await;
+
+            &mut request_queue_guard.try_send(IoRequest {
+                token,
+                filename: filename.to_string(),
+            }).expect("...");
+        });
     });
 
 
@@ -104,26 +106,18 @@ pub extern fn queue_read(filename: *const c_char) -> u64 {
 
 #[no_mangle]
 pub extern fn poll() -> *const Buffer {
-
     task::block_on(async {
-
-        let mut recv_queue = {
-            let mut request_queue_guard = RESPONSE_QUEUE.lock().await;
-
-            &mut request_queue_guard.1.take().unwrap()
-        };
+        let mut recv_queue = RESPONSE_QUEUE.1.lock().expect("...");
 
         loop {
-
             let response: IoResponse = match recv_queue.next().await {
                 Some(v) => v,
                 None => {
-
-                    continue
+                    continue;
                 }
             };
 
-            println!("rust: got msg. {:?}", &response);
+            // println!("rust: got msg. {:?}", &response);
 
             let mut buf = response.data.clone();
 
@@ -132,8 +126,6 @@ pub extern fn poll() -> *const Buffer {
 
             return Box::into_raw(Box::new(Buffer { data: string_data.into_raw(), len: len as u32 }));
         }
-
-
     })
 }
 
