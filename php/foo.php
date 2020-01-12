@@ -2,7 +2,7 @@
 
 $ffi = \FFI::cdef(
     file_get_contents(__DIR__ . '/../rlib/rlib.h'),
-    __DIR__ . '/../rlib/target/release/librlib.dylib'
+    __DIR__ . '/../osx_librlib.dylib' // __DIR__ . '/../rlib/target/release/librlib.dylib'
 );
 
 file_put_contents('/tmp/foo1.txt', 'one');
