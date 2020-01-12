@@ -1,9 +1,9 @@
 struct Buffer {
-    uint64_t   data;
-    uint32_t   len; // u64 doesnt work?!
+    char*   data;
+    uint32_t   len;
 };
 
 void start();
 uint64_t queue_read(char* filename);
 // void free_buf(struct buffer *buf);
-struct Buffer poll();
+struct Buffer* poll();
