@@ -1,0 +1,9 @@
+[package]
+name = "rlib"
+version = "0.1.0"
+authors = ["timglabisch <tim@ainfach.de>"]
+edition = "2018"
+
+[lib]
+name = "example"
+crate-type = ["dylib"]
