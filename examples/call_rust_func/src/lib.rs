@@ -5,28 +5,32 @@ pub extern fn return_u64() -> u64 {
 
 #[repr(C)]
 pub struct ComplexFlatStructure {
-    pub a: u8,
-    pub b: i8,
-    pub c: u16,
-    pub d: i16,
-    pub e: u32,
-    pub f: i32,
-    pub g: u64,
-    pub h: i64,
-    pub i: bool,
+    pub _1: i8,
+    pub _2: i16,
+    pub _3: i32,
+    pub _4: i64,
+    pub _5: u8,
+    pub _6: u16,
+    pub _7: u32,
+    pub _8: u64,
+}
+
+impl ComplexFlatStructure {
+    pub fn new() -> Self {
+        ComplexFlatStructure {
+            _1: 1,
+            _2: 2,
+            _3: 3,
+            _4: 4,
+            _5: 5,
+            _6: 6,
+            _7: 7,
+            _8: 8,
+        }
+    }
 }
 
 #[no_mangle]
 pub extern fn return_pointer() -> *const ComplexFlatStructure {
-    Box::into_raw(Box::new(ComplexFlatStructure {
-        a: 1,
-        b: 2,
-        c: 3,
-        d: 4,
-        e: 5,
-        f: 6,
-        g: 7,
-        h: 8,
-        i: true,
-    }))
+    Box::into_raw(Box::new(ComplexFlatStructure::new()))
 }

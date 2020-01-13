@@ -16,4 +16,13 @@ class exampleTest extends TestCase
     {
         static::assertSame(42, $this->ffi()->return_u64());
     }
+
+    public function testReturnPointer()
+    {
+        $res = $this->ffi()->return_pointer();
+
+        var_dump($res);
+
+        // static::assertSame(1, $res->_1);
+    }
 }

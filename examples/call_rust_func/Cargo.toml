@@ -7,3 +7,6 @@ edition = "2018"
 [lib]
 name = "example"
 crate-type = ["dylib"]
+
+[dependencies]
+libc = "*"
