@@ -1,4 +1,5 @@
 .idea/*
-rlib/target
+**/target
 **/*.rs.bk
-rlib/Cargo.lock
+**/Cargo.lock
+/vendor/

@@ -1,0 +1,15 @@
+{
+    "name": "timglabisch/ffi_examples",
+    "type": "project",
+    "require": {
+        "phpunit/phpunit": "^9.0@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "timglabisch",
+            "email": "github@tim.ainfach.de"
+        }
+    ],
+    "minimum-stability": "dev"
+}
