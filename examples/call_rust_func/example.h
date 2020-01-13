@@ -1,1 +1,1 @@
-uint64_t example_return_u64();
+uint64_t return_u64();

@@ -12,8 +12,8 @@ class exampleTest extends TestCase
         );
     }
 
-    public function testBasic()
+    public function testReturnU64()
     {
-        static::assertSame(42, $this->ffi()->example_return_u64());
+        static::assertSame(42, $this->ffi()->return_u64());
     }
 }
