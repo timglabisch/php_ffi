@@ -1,4 +1,5 @@
-run:
-	cd rlib && cargo build --release
-	cp rlib/target/release/librlib.dylib osx_librlib.dylib
-	cd php && php foo.php
+example_async:
+	cd examples/async && cargo build --release
+	php ./vendor/bin/phpunit --bootstrap vendor/autoload.php ./examples/async
+
+run: example_async
