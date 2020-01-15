@@ -15,4 +15,4 @@ struct ComplexFlatStructure* return_pointer();
 void free_pointer(struct ComplexFlatStructure*);
 
 char* return_string();
-void free_string();
+void free_string(char*);

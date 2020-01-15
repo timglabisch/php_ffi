@@ -43,5 +43,7 @@ class exampleTest extends TestCase
             \FFI::string($res),
             "some string ...😀"
         );
+
+        $ffi->free_string($res);
     }
 }
