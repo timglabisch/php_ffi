@@ -8,6 +8,6 @@ function ffi()
     );
 }
 
-$res = ffi()->return_pointer();
+$res = ffi()->bug79096();
 
 var_dump($res);
