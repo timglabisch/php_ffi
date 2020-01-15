@@ -9,7 +9,7 @@ class exampleTest extends TestCase
 
         $ffi = \FFI::cdef(
             file_get_contents(__DIR__ . '/example.h'),
-            __DIR__ . '/target/release/libexample.dylib'
+            __DIR__ . '/target/release/libexample.so'
         );
 
         file_put_contents($file1 = sys_get_temp_dir().'/foo1.txt', $content1 = 'one');
