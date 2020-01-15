@@ -1,3 +1,6 @@
+use std::os::raw::c_char;
+use std::ffi::CString;
+
 #[no_mangle]
 pub extern fn return_u64() -> u64 {
     42
@@ -38,4 +41,14 @@ pub extern fn return_pointer() -> *const ComplexFlatStructure {
 #[no_mangle]
 pub extern fn free_pointer(ptr : *mut ComplexFlatStructure) {
     unsafe { Box::from_raw(ptr) };
+}
+
+#[no_mangle]
+pub extern fn return_string() -> *const c_char {
+    CString::into_raw(CString::new("some string ...😀").expect("..."))
+}
+
+#[no_mangle]
+pub extern fn free_string(cstr : *mut c_char) {
+    unsafe { CString::from_raw(cstr); }
 }

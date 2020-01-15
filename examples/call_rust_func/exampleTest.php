@@ -34,4 +34,14 @@ class exampleTest extends TestCase
 
         $ffi->free_pointer($res);
     }
+
+    public function testReturnString() {
+        $ffi = $this->ffi();
+        $res = $ffi->return_string();
+
+        static::assertSame(
+            \FFI::string($res),
+            "some string ...😀"
+        );
+    }
 }
