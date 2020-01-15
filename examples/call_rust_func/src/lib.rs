@@ -34,3 +34,8 @@ impl ComplexFlatStructure {
 pub extern fn return_pointer() -> *const ComplexFlatStructure {
     Box::into_raw(Box::new(ComplexFlatStructure::new()))
 }
+
+#[no_mangle]
+pub extern fn free_pointer(ptr : *mut ComplexFlatStructure) {
+    unsafe { Box::from_raw(ptr) };
+}

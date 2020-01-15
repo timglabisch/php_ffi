@@ -31,5 +31,7 @@ class exampleTest extends TestCase
         static::assertSame(6, $res[0]->_6);
         static::assertSame(7, $res[0]->_7);
         static::assertSame(8, $res[0]->_8);
+
+        $ffi->free_pointer($res);
     }
 }

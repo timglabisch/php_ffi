@@ -11,3 +11,4 @@ struct ComplexFlatStructure {
 
 uint64_t return_u64();
 struct ComplexFlatStructure* return_pointer();
+void free_pointer(struct ComplexFlatStructure*);
