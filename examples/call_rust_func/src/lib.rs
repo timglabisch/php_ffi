@@ -72,7 +72,7 @@ impl StructWithPointer {
                 _1: CString::new("ifoo1").unwrap(),
                 _2: CString::new("ifoo2").unwrap(),
             },
-            _3: CString::new("foo2").unwrap(),
+            _3: CString::new("foo3").unwrap(),
         }
     }
 }

@@ -51,6 +51,10 @@ class exampleTest extends TestCase
         $ffi = $this->ffi();
         $res = $ffi->return_struct_with_pointer();
 
-        var_dump($res);
+        static::assertSame(\FFI::string($res->_1), "foo1");
+        static::assertSame(\FFI::string($res->_2->_1), "ifoo1");
+        static::assertSame(\FFI::string($res->_2->_2), "ifoo2");
+        static::assertSame(\FFI::string($res->_3), "foo3");
+
     }
 }
