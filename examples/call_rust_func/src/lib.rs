@@ -53,62 +53,43 @@ pub extern fn free_string(cstr: *mut c_char) {
     unsafe { CString::from_raw(cstr); }
 }
 
-pub struct StructWithPointerInner {
-    pub _1: CString,
-    pub _2: CString,
-}
-
-pub struct StructWithPointer {
-    pub _1: CString,
-    pub _2: StructWithPointerInner,
-    pub _3: CString,
-}
-
-impl StructWithPointer {
-    pub fn new() -> StructWithPointer {
-        StructWithPointer {
-            _1: CString::new("foo1").unwrap(),
-            _2: StructWithPointerInner {
-                _1: CString::new("ifoo1").unwrap(),
-                _2: CString::new("ifoo2").unwrap(),
-            },
-            _3: CString::new("foo3").unwrap(),
-        }
-    }
-}
 
 #[repr(C)]
 pub struct StructWithPointerInnerC {
-    _1: *const c_char,
-    _2: *const c_char,
+    _1: *mut c_char,
+    _2: *mut c_char,
 }
 
 #[repr(C)]
 pub struct StructWithPointerC {
-    _1: *const c_char,
-    _2: *const StructWithPointerInnerC,
-    _3: *const c_char,
+    _1: *mut c_char,
+    _2: *mut StructWithPointerInnerC,
+    _3: *mut c_char,
 }
 
 #[no_mangle]
 pub extern fn return_struct_with_pointer() -> *const StructWithPointerC {
-    let StructWithPointer { _1: _1, _2: _2, _3: _3 } = StructWithPointer::new();
-    let StructWithPointerInner { _1: i1, _2: i2 } = _2;
 
     let y = StructWithPointerC {
-        _1: _1.into_raw(),
+        _1: CString::new("foo1").unwrap().into_raw(),
         _2: Box::into_raw(Box::new(StructWithPointerInnerC {
-            _1: i1.into_raw(),
-            _2: i2.into_raw(),
+            _1: CString::new("ifoo1").unwrap().into_raw(),
+            _2: CString::new("ifoo2").unwrap().into_raw(),
         })),
-        _3: _3.into_raw(),
+        _3: CString::new("foo3").unwrap().into_raw(),
     };
 
     Box::into_raw(Box::new(y))
 }
 
 #[no_mangle]
-pub extern fn free_struct_with_pointer(d: *mut StructWithPointer) {
+pub extern fn free_struct_with_pointer(d: *mut StructWithPointerC) {
+    unsafe { CString::from_raw((*d)._1); }
+    unsafe { CString::from_raw((*(*d)._2)._1); }
+    unsafe { CString::from_raw((*(*d)._2)._2); }
+    unsafe { Box::from_raw((*d)._2); }
+    unsafe { CString::from_raw((*d)._3); }
     unsafe { Box::from_raw(d); }
+
 }
 

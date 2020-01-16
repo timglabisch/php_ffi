@@ -35,7 +35,8 @@ class exampleTest extends TestCase
         $ffi->free_pointer($res);
     }
 
-    public function testReturnString() {
+    public function testReturnString()
+    {
         $ffi = $this->ffi();
         $res = $ffi->return_string();
 
@@ -47,7 +48,8 @@ class exampleTest extends TestCase
         $ffi->free_string($res);
     }
 
-    public function testReturnStructWithPointer() {
+    public function testReturnStructWithPointer()
+    {
         $ffi = $this->ffi();
         $res = $ffi->return_struct_with_pointer();
 
@@ -56,5 +58,6 @@ class exampleTest extends TestCase
         static::assertSame(\FFI::string($res->_2->_2), "ifoo2");
         static::assertSame(\FFI::string($res->_3), "foo3");
 
+        $ffi->free_struct_with_pointer($res);
     }
 }
