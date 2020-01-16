@@ -16,3 +16,18 @@ void free_pointer(struct ComplexFlatStructure*);
 
 char* return_string();
 void free_string(char*);
+
+
+struct StructWithPointerInner {
+    char*   _1;
+    char*   _2;
+};
+
+struct StructWithPointer {
+    char*   _1;
+    struct StructWithPointerInner*  _2;
+    char*   _3;
+};
+
+struct StructWithPointer* return_struct_with_pointer();
+void free_struct_with_pointer(struct StructWithPointer*);

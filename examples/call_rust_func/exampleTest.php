@@ -46,4 +46,11 @@ class exampleTest extends TestCase
 
         $ffi->free_string($res);
     }
+
+    public function testReturnStructWithPointer() {
+        $ffi = $this->ffi();
+        $res = $ffi->return_struct_with_pointer();
+
+        var_dump($res);
+    }
 }
