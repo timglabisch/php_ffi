@@ -84,12 +84,12 @@ pub extern fn return_struct_with_pointer() -> *const StructWithPointerC {
 
 #[no_mangle]
 pub extern fn free_struct_with_pointer(d: *mut StructWithPointerC) {
+    // cou can also do this in the drop function :)
     unsafe { CString::from_raw((*d)._1); }
     unsafe { CString::from_raw((*(*d)._2)._1); }
     unsafe { CString::from_raw((*(*d)._2)._2); }
     unsafe { Box::from_raw((*d)._2); }
     unsafe { CString::from_raw((*d)._3); }
     unsafe { Box::from_raw(d); }
-
 }
 
