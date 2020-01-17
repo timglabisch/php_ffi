@@ -31,3 +31,11 @@ struct StructWithPointer {
 
 struct StructWithPointer* return_struct_with_pointer();
 void free_struct_with_pointer(struct StructWithPointer*);
+
+struct StructWithPointerAndDrop {
+    char*   _1;
+    char*   _2;
+};
+
+struct StructWithPointerAndDrop* return_struct_with_pointer_drop();
+void free_struct_with_pointer_drop(struct StructWithPointerAndDrop*);

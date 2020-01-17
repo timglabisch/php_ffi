@@ -69,7 +69,6 @@ pub struct StructWithPointerC {
 
 #[no_mangle]
 pub extern fn return_struct_with_pointer() -> *const StructWithPointerC {
-
     let y = StructWithPointerC {
         _1: CString::new("foo1").unwrap().into_raw(),
         _2: Box::into_raw(Box::new(StructWithPointerInnerC {
@@ -93,3 +92,30 @@ pub extern fn free_struct_with_pointer(d: *mut StructWithPointerC) {
     unsafe { Box::from_raw(d); }
 }
 
+#[repr(C)]
+pub struct StructWithPointerAndDrop {
+    _1: *mut c_char,
+    _2: *mut c_char,
+}
+
+impl Drop for StructWithPointerAndDrop {
+    fn drop(&mut self) {
+        unsafe {
+            CString::from_raw(self._1);
+            CString::from_raw(self._2);
+        }
+    }
+}
+
+#[no_mangle]
+pub extern fn return_struct_with_pointer_drop() -> *const StructWithPointerAndDrop {
+    Box::into_raw(Box::new(StructWithPointerAndDrop {
+        _1: CString::new("foo1").unwrap().into_raw(),
+        _2: CString::new("foo2").unwrap().into_raw(),
+    }))
+}
+
+#[no_mangle]
+pub extern fn free_struct_with_pointer_drop(d: *mut StructWithPointerC) {
+    unsafe { Box::from_raw(d); }
+}

@@ -60,4 +60,15 @@ class exampleTest extends TestCase
 
         $ffi->free_struct_with_pointer($res);
     }
+
+    public function testReturnStructWithPointerDrop()
+    {
+        $ffi = $this->ffi();
+        $res = $ffi->return_struct_with_pointer_drop();
+
+        static::assertSame(\FFI::string($res->_1), "foo1");
+        static::assertSame(\FFI::string($res->_2), "foo2");
+
+        $ffi->free_struct_with_pointer_drop($res);
+    }
 }
