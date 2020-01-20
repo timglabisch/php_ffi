@@ -9,4 +9,4 @@ example_call_rust_func:
 export_php:
 	php ./vendor/bin/phpunit --bootstrap vendor/autoload.php ./examples/export_php
 
-run: example_async example_call_rust_func
+run: export_php

@@ -4,14 +4,15 @@ use PHPUnit\Framework\TestCase;
 
 class exampleTest extends TestCase
 {
-    public function ffi()
+
+    public static function assertObSame(string $expected, callable $cb)
     {
-        /*
-        return \FFI::cdef('
-            typedef int (*zend_write_func_t)(const char *str, size_t str_length);
-            extern zend_write_func_t zend_write;
-        ');
-        */
+        ob_start();
+        $cb();
+        $res = ob_get_contents();
+        ob_end_clean();
+
+        static::assertSame($expected, $res);
     }
 
     public function testReturnU64()
@@ -20,21 +21,15 @@ class exampleTest extends TestCase
         $zend = FFI::cdef("
     typedef int (*zend_write_func_t)(const char *str, size_t str_length);
     extern zend_write_func_t zend_write;
-");
+        ");
 
-        echo "Hello World 1!\n";
+        static::assertObSame('aaa', function() use ($zend) { $a = $zend->zend_write; $a("aaa", 3); });
+        static::assertObSame('aaa', function() use ($zend) { ($zend->zend_write)("aaa", 3); });
+        static::assertObSame('aaa', function() use ($zend) { (clone $zend->zend_write)("aaa", 3); });
+        static::assertObSame('aaa', function() use ($zend) { $a = [$zend, 'zend_write']; $a("aaa", 3); });
 
-        $orig_zend_write = clone $zend->zend_write;
-        $zend->zend_write = function($str, $len) {
-            global $orig_zend_write;
-            $orig_zend_write("{\n\t", 3);
-            $ret = $orig_zend_write($str, $len);
-            $orig_zend_write("}\n", 2);
-            return $ret;
-        };
-        echo "Hello World 2!\n";
-        $zend->zend_write = $orig_zend_write;
-        echo "Hello World 3!\n";
+        // does not work
+        // static::assertObSame('aaa', function() use ($zend) { $zend->zend_write("aaa", 3); });
     }
 
 }
