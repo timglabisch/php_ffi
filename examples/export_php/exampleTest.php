@@ -21,15 +21,20 @@ class exampleTest extends TestCase
         $zend = FFI::cdef("
     typedef int (*zend_write_func_t)(const char *str, size_t str_length);
     extern zend_write_func_t zend_write;
+    
+    extern size_t php_output_write(const char *str, size_t str_length);
         ");
 
         static::assertObSame('aaa', function() use ($zend) { $a = $zend->zend_write; $a("aaa", 3); });
         static::assertObSame('aaa', function() use ($zend) { ($zend->zend_write)("aaa", 3); });
         static::assertObSame('aaa', function() use ($zend) { (clone $zend->zend_write)("aaa", 3); });
-        static::assertObSame('aaa', function() use ($zend) { $a = [$zend, 'zend_write']; $a("aaa", 3); });
 
         // does not work
         // static::assertObSame('aaa', function() use ($zend) { $zend->zend_write("aaa", 3); });
+        // static::assertObSame('aaa', function() use ($zend) { $a = [$zend, 'zend_write']; $a("aaa", 3); });
+
+        static::assertObSame('aaa', function() use ($zend) { $zend->php_output_write("aaa", 3); });
+        static::assertObSame('aaa', function() use ($zend) { $a = [$zend, 'php_output_write']; $a("aaa", 3); });
     }
 
 }
